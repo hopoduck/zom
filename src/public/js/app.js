@@ -3,10 +3,27 @@ const socket = io();
 const myFace = document.querySelector("#myFace");
 const muteBtn = document.querySelector("#mute");
 const cameraBtn = document.querySelector("#camera");
+const camerasSelect = document.querySelector("#cameras");
 
 let myStream;
 let cameraOff = true;
 let muted = false;
+
+async function getCamera() {
+  try {
+    const devieces = await navigator.mediaDevices.enumerateDevices();
+    const cameras = devieces.filter((device) => device.kind === "videoinput");
+    cameras.forEach((camera) => {
+      const option = document.createElement("option");
+      option.value = camera.deviceId;
+      option.innerText = camera.label;
+      camerasSelect.appendChild(option);
+    });
+    console.log(devieces, cameras);
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 async function getMedia() {
   try {
@@ -22,6 +39,7 @@ async function getMedia() {
 }
 
 function handleMuteClick() {
+  myStream.getAudioTracks().forEach((track) => (track.enabled = !track.enabled));
   if (!muted) {
     muteBtn.innerText = "Unmute";
     muted = true;
@@ -31,6 +49,7 @@ function handleMuteClick() {
   }
 }
 function handleCameraClick() {
+  myStream.getVideoTracks().forEach((track) => (track.enabled = !track.enabled));
   if (cameraOff) {
     cameraBtn.innerText = "Turn camera off";
     cameraOff = false;
@@ -44,3 +63,4 @@ muteBtn.addEventListener("click", handleMuteClick);
 cameraBtn.addEventListener("click", handleCameraClick);
 
 getMedia();
+getCamera();
