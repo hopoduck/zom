@@ -8,12 +8,12 @@ room.hidden = true;
 
 let roomName = "";
 
-const showRoom = () => {
+function showRoom() {
   welcome.hidden = true;
   room.hidden = false;
   const h3 = room.querySelector("h3");
   h3.innerText = `Room ${roomName}`;
-};
+}
 
 function handleRoomSubmit(e) {
   e.preventDefault();
@@ -23,6 +23,15 @@ function handleRoomSubmit(e) {
   input.value = "";
 }
 
+function addMessage(message) {
+  const ul = room.querySelector("ul");
+  const li = document.createElement("li");
+  li.innerText = message;
+  ul.append(li);
+}
+
 form.addEventListener("submit", handleRoomSubmit);
 
-socket.io;
+socket.on("welcome", () => {
+  addMessage("someone joined");
+});
